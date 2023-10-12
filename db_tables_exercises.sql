@@ -24,13 +24,17 @@ SHOW TABLES;
 -- 10. Explore the employees table. What different data types are present in this table?
 DESCRIBE employees;
 -- Different data types present are int, date, varchar, enum
+
 SHOW TABLES;
+SELECT table_name, column_name, data_type
+FROM information_schema.columns
+WHERE table_schema = 'employees'; -- Thank you Kelsey!
 
 -- 11. Which table(s) do you think contain a numeric type column?
--- All of them (at least to hold a primary key)
+-- dept_emp, dept_manager, and employees
 
 -- 12. Which table(s) do you think contain a string type column?
--- All tables
+-- All tables except salaries
 
 -- 13. Which table(s) do you think contain a date type column?
 -- Employees and titles
@@ -41,6 +45,7 @@ DESCRIBE departments;
 DESCRIBE dept_emp;
 -- The employees table has the emp_no column, which is also in the dept_emp table.
 -- The dept_emp table has the dept_no column, which is also in the departments table.
+-- In other words: the two tables are linked through a third table, but have no direct relationship.
 
 -- 15. Show the SQL code that created the dept_manager table. Write the SQL it takes to show this as your exercise solution.
 SHOW CREATE TABLE dept_manager;
