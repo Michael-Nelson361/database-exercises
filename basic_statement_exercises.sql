@@ -15,7 +15,7 @@ DESCRIBE albums;
 -- Total number of sales
 
 -- 5. Find the name of all albums by Pink Floyd.
-SELECT name FROM albums WHERE artist = 'Pink Floyd';
+SELECT * FROM albums WHERE artist = 'Pink Floyd';
 -- 2 results found: The Dark Side of the Moon, The Wall
 
 -- 6. What is the year Sgt. Pepper's Lonly Hearts Club Band was released?
@@ -24,7 +24,7 @@ SELECT release_date FROM albums WHERE name = "Sgt. Pepper's Lonely Hearts Club B
 -- 1967
 
 -- 7. What is the genre for the album Nevermind?
-SELECT genre FROM albums WHERE name = 'Nevermind';
+SELECT name,genre FROM albums WHERE name = 'Nevermind';
 -- Grunge, alternative rock
 
 
@@ -32,4 +32,4 @@ SELECT genre FROM albums WHERE name = 'Nevermind';
 SELECT * FROM albums WHERE release_date BETWEEN 1990 AND 1999;
 
 -- 9. Which albums had less than 20 million certified sales? Rename this column as low_selling_albums
-SELECT DISTINCT name as low_selling_albums FROM albums WHERE sales < 20;
+SELECT DISTINCT name as low_selling_albums,sales FROM albums WHERE sales < 20;
