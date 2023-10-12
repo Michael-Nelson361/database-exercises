@@ -12,10 +12,11 @@ SELECT name FROM albums;
 
 -- 4. What do you think the sales column represents?
 DESCRIBE albums;
--- Total number of sales
+Select sales FROM albums;
+-- Total number of sales in millions
 
 -- 5. Find the name of all albums by Pink Floyd.
-SELECT * FROM albums WHERE artist = 'Pink Floyd';
+SELECT name FROM albums WHERE artist = 'Pink Floyd';
 -- 2 results found: The Dark Side of the Moon, The Wall
 
 -- 6. What is the year Sgt. Pepper's Lonly Hearts Club Band was released?
@@ -29,7 +30,33 @@ SELECT name,genre FROM albums WHERE name = 'Nevermind';
 
 
 -- 8. Which albums were released in the 1990s?
-SELECT * FROM albums WHERE release_date BETWEEN 1990 AND 1999;
+SELECT name FROM albums WHERE release_date BETWEEN 1990 AND 1999;
+-- 'The Bodyguard'
+-- 'Jagged Little Pill'
+-- 'Come On Over'
+-- 'Falling into You'
+-- 'Let\'s Talk About Love'
+-- 'Dangerous'
+-- 'The Immaculate Collection'
+-- 'Titanic: Music from the Motion Picture'
+-- 'Metallica'
+-- 'Nevermind'
+-- 'Supernatural'
+
 
 -- 9. Which albums had less than 20 million certified sales? Rename this column as low_selling_albums
-SELECT DISTINCT name as low_selling_albums,sales FROM albums WHERE sales < 20;
+SELECT name as low_selling_albums FROM albums WHERE sales < 20;
+-- 'Grease: The Original Soundtrack from the Motion Picture'
+-- 'Bad'
+-- 'Sgt. Pepper\'s Lonely Hearts Club Band'
+-- 'Dirty Dancing'
+-- 'Let\'s Talk About Love'
+-- 'Dangerous'
+-- 'The Immaculate Collection'
+-- 'Abbey Road'
+-- 'Born in the U.S.A.'
+-- 'Brothers in Arms'
+-- 'Titanic: Music from the Motion Picture'
+-- 'Nevermind'
+-- 'The Wall'
+
