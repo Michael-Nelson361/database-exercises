@@ -29,7 +29,7 @@ SELECT genre FROM albums WHERE name = 'Nevermind';
 
 
 -- 8. Which albums were released in the 1990s?
-SELECT name FROM albums WHERE release_date BETWEEN 1990 AND 1999;
+SELECT * FROM albums WHERE release_date BETWEEN 1990 AND 1999;
 
 -- 9. Which albums had less than 20 million certified sales? Rename this column as low_selling_albums
-SELECT DISTINCT name as low_selling_albums FROM albums WHERE sales < 20000000;
+SELECT DISTINCT name as low_selling_albums FROM albums WHERE sales < 20;
