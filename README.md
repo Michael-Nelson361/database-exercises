@@ -9,7 +9,7 @@ This repo is being used for the foreseeable future during the Codeup SQL section
 04. where_advanced_exercises.sql
 05. order_by_exercises.sql
 06. limit_exercises.sql
-07. functions_exercises.sql (Incomplete)
+07. functions_exercises.sql
 08. group_by_exercises.sql (Incomplete)
 09. join_exercises.sql (Incomplete)
 10. subqueries_exercises.sql (Incomplete)
