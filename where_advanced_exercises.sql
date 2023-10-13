@@ -39,11 +39,11 @@ where (first_name = 'Irena'
 -- Employee number of the top 3 results are: 10200, 10397, and 10821
 
 -- 4. Find all unique last names that start with 'E'.
-select *
+select distinct last_name
 from employees
 where last_name like 'e%'
 ;
--- return limit reached at 1000
+-- 40 rows returned
 
 -- 5. Find all unique last names that start or end with 'E'.
 select distinct last_name
