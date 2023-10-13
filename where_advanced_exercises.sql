@@ -73,8 +73,10 @@ where last_name like 'e%e' -- adjusted for brevity
 -- Enter a comment with the top three employee numbers.
 select *
 from employees
-where hire_date >='1990-01-01'
-	and hire_date <'2000-01-01'
+-- where hire_date >='1990-01-01'
+-- 	and hire_date <'2000-01-01'
+where hire_date like '199%' -- apparent simplest way of coding this
+-- where hire_date between 19900101 and 19991231 -- sql recognizes dates when in strict numeric format apparently
 ;
 -- Top 3 employees returned: 10008, 10011, 10012
 
