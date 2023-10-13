@@ -64,8 +64,8 @@ where last_name like '%e'
 -- 7. Find all unique last names that start and end with 'E'.
 select distinct last_name
 from employees
-where last_name like 'e%'
-	and last_name like '%e'
+where last_name like 'e%e' -- adjusted for brevity
+-- 	and last_name like '%e'
 ;
 -- 5 rows returned: Erde, Eldridge, Etalle, Erie, and Erbe
 
