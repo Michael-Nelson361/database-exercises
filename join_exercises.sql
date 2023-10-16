@@ -1,14 +1,22 @@
 -- Create a file named join_exercises.sql to do your work in.
-
+show databases;
 
 -- Join Example Database
 -- 1. Use the join_example_db. 
 -- 	Select all the records from both the users and roles tables.
-
+use join_example_db;
+select database();
+show tables;
+select *
+from roles;
+select *
+from users;
 
 -- 2. Use join, left join, and right join to combine results from the users and roles tables as we did in the lesson. 
 -- 	Before you run each query, guess the expected number of results.
-
+select users.name as user_name, roles.name as role_name
+from users
+join roles on users.role_id = roles.id;
 
 -- 3. Although not explicitly covered in the lesson, aggregate functions like count can be used with join queries. 
 -- 	Use count and the appropriate join type to get a list of roles along with the number of users that have the role. 
