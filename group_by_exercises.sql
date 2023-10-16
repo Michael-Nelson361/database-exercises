@@ -32,17 +32,47 @@ order by last_name
 -- Include those names in a comment in your sql code.
 select last_name
 from employees
+where last_name like '%q%'
+	and last_name not like '%qu%'
+group by last_name
 ;
+-- Chleq, Lindqvist, and Qiwen
 
 -- Add a COUNT() to your results for exercise 5 to find the number of employees with the same last name.
-
+select last_name, count(*)
+from employees
+where last_name like '%q%'
+	and last_name not like '%qu%'
+group by last_name
+;
+-- Chleq, 189
+-- Lindqvist, 190
+-- Qiwen, 168
 
 -- Find all employees with first names 'Irena', 'Vidya', or 'Maya'. 
 -- Use COUNT(*) and GROUP BY to find the number of employees with those names for each gender.
-
+select first_name, gender, count(*)
+from employees
+where first_name in ('Irena','Vidya','Maya')
+group by gender, first_name
+order by first_name, gender
+;
+/*
+Irena:(M)-144, (F)-97
+Maya:(M)-146, (F)-90
+Vidya:(M)-151, (F)-81
+*/
 
 -- Using your query that generates a username for all employees, generate a count of employees with each unique username.
-
+select concat(
+	substr(lower(first_name),1,1)
+	,substr(lower(last_name),1,4)
+    ,'_'
+    ,substr(birth_date,6,2)
+	,substr(year(birth_date),3,2))
+    as username, first_name, last_name, birth_date
+from employees
+; -- WIP
 
 -- From your previous query, are there any duplicate usernames? 
 -- What is the highest number of times a username shows up? 
