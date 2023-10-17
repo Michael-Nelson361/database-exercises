@@ -11,8 +11,8 @@ This repo is being used for the foreseeable future during the Codeup SQL section
 06. limit_exercises.sql
 07. functions_exercises.sql
 08. group_by_exercises.sql
-09. join_exercises.sql (Incomplete)
-10. subqueries_exercises.sql (Incomplete)
-11. case_exercises.sql (Incomplete)
-12. temporary_tables.sql (Incomplete)
-13. more_exercises.sql (Incomplete)
+09. join_exercises.sql (In progress)
+10. subqueries_exercises.sql (Initialized)
+11. case_exercises.sql (Initialized)
+12. temporary_tables.sql (Initialized)
+13. more_exercises.sql (Initialized)
