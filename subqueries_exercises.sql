@@ -1,11 +1,28 @@
 -- Create a file named subqueries_exercises.sql and craft queries to return the results for the following criteria:
-
+use employees;
 
 -- 1. Find all the current employees with the same hire date as employee 101010 using a subquery.
-
+select *
+from employees
+inner join dept_emp
+	using(emp_no)
+where hire_date = (
+	select hire_date
+    from employees
+    where emp_no = 101010
+) and to_date > curdate()
+;
 
 -- 2. Find all the titles ever held by all current employees with the first name Aamod.
-
+select distinct title
+from employees as e
+inner join dept_emp as de
+	using(emp_no)
+inner join titles as t
+	using(emp_no)
+where de.to_date > curdate() and first_name = 'Aamod'
+limit 100
+;
 
 -- 3. How many people in the employees table are no longer working for the company? Give the answer in a comment in your code.
 
