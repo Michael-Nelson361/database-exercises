@@ -127,6 +127,7 @@ limit 50
 describe dept_emp;
 select dept_no as 'Department Number',count(emp_no) as 'Employees in Department'
 from dept_emp
+where to_date > curdate()
 group by dept_no
 limit 50
 ;
