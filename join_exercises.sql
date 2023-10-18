@@ -33,11 +33,20 @@ on users.role_id = roles.id
 -- 3. Although not explicitly covered in the lesson, aggregate functions like count can be used with join queries. 
 -- 	Use count and the appropriate join type to get a list of roles along with the number of users that have the role. 
 -- 	Hint: You will also need to use group by in the query.
+/*
 select roles.name, count(*)
 from roles
 inner join users
 on roles.id = users.role_id
 group by roles.name
+;*/		-- CORRECT ANSWER:
+select
+	count(u.id),
+    r.name
+from roles as r
+left join users as u
+	on r.id=u.role_id
+group by r.name
 ;
 
 -- Employees Database
@@ -57,6 +66,21 @@ inner join departments as d
 where to_date > curdate()
 order by dept_name
 ;
+
+/* ANSWER:
+select
+	d.dept_name as 'Department Name',
+    concat(e.first_name, ' ',e.last_name) as 'Department Manager'
+from departments d
+join dept_manager dm
+	on d.dept_no=dm.dept_no
+    and dm.to_date > now()
+join employees e
+	on e.emp_no=dm.emp_no
+-- where dm.to_date > now()
+order by dept_name
+; */
+
 
 -- 3. Find the name of all departments currently managed by women.
 select 
@@ -141,6 +165,7 @@ inner join departments as d
 	using(dept_no)
 where dept_name = 'Marketing'
 	and s.to_date > curdate()
+    and de.to_date > curdate() -- added to ensure employee is current
 order by salary desc
 limit 1
 ;
@@ -192,3 +217,21 @@ where de.to_date > curdate()
 order by dept_name
 limit 50
 ;
+
+/* with subqueries! */
+SELECT
+	CONCAT(e.first_name, ' ', e.last_name) AS 'Employee Name',
+	d.dept_name AS 'Department Name',
+	m.managers AS 'Manager Name'
+FROM employees AS e
+JOIN dept_emp AS de ON de.emp_no = e.emp_no
+	AND de.to_date > CURDATE()
+JOIN departments AS d ON de.dept_no = d.dept_no 
+JOIN (SELECT
+		 dm.dept_no,
+		 CONCAT(e.first_name, ' ', e.last_name) AS managers
+	 FROM employees AS e
+	 JOIN dept_manager AS dm ON e.emp_no = dm.emp_no
+		 AND to_date > CURDATE()) AS m 
+	ON m.dept_no = d.dept_no
+ORDER BY d.dept_name;
