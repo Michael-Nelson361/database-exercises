@@ -38,13 +38,9 @@ group by decade
 select 
 	count(*)
 	,case
-		when year(birth_date) < 1950 then 1940
-        when year(birth_date) < 1960 then 1950
-        when year(birth_date) < 1970 then 1960
-        when year(birth_date) < 1980 then 1970
-        when year(birth_date) < 1990 then 1980
-        when year(birth_date) < 2000 then 1990
-        else 'Gen Z'
+        when year(birth_date) < 1960 then '50s'
+        when year(birth_date) < 1970 then '60s'
+        else 'other'
     end as birth_decade
 from employees as e
 group by birth_decade
