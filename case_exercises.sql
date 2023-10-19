@@ -74,12 +74,31 @@ group by dept_group
 -- BONUS
 
 -- Remove duplicate employees from exercise 1.
+select 
+	emp_no
+	,count(emp_no) as doubles
+from dept_emp as de
+group by emp_no
+;
 
 select 
 	de.*
     , case
-		when to_date > now() then 1
+		when to_date < now() and doubles > 1 then null -- mark field with null if the employee has moved departments and not companies
+        when to_date > now() then 1 -- This has to be after the above, or duplicate records won't be caught
         else 0
-	end as is_current_employee
+	end as is_current
+    -- ,double_count.* -- Visually check matching double_count properly
 from dept_emp as de
+left join 
+	( # Subquery to tack on a "tag" denoting employees who are found twice
+    select 
+		emp_no
+		,count(emp_no) as doubles
+	from dept_emp as de
+	group by emp_no
+    ) as double_count
+    using(emp_no)
+having is_current is not null	-- Take out any employee whose is_current field has a null in it
+-- having is_current is null and to_date > now()	-- Check to see if case 1 happened to pick up any current records
 ;
