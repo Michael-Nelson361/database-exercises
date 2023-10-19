@@ -84,7 +84,7 @@ group by emp_no
 select 
 	de.*
     , case
-		when to_date < now() and doubles > 1 then null -- mark field with null if the employee has moved departments and not companies
+		when to_date < now() and doubles > 1 then NULL -- mark field with null if the employee has moved departments and not companies
         when to_date > now() then 1 -- This has to be after the above, or duplicate records won't be caught
         else 0
 	end as is_current
