@@ -19,7 +19,10 @@ from titles
 where emp_no in (
 	select emp_no
     from employees
+    join dept_emp as de -- attach dept_emp to filter on current employees
+		using(emp_no)
     where first_name = 'Aamod'
+		and de.to_date > now()
 )
 ;
 
@@ -65,8 +68,9 @@ Hilary Kambil
 from salaries;*/
 
 select 
-	concat(e.first_name, ' ',e.last_name) as 'Employee Name'
-    ,salary as 'Salary'
+	count(*)
+	/*concat(e.first_name, ' ',e.last_name) as 'Employee Name'
+    ,salary as 'Salary'*/
 from employees as e
 join salaries as s
 	on e.emp_no=s.emp_no
@@ -75,7 +79,7 @@ join salaries as s
 	on de.emp_no=e.emp_no
     and de.to_date>now()*/	-- Testing to see if this makes a difference
 where salary > (
-	select round(avg(salary)) as avg_salary
+	select round(avg(salary),2) as avg_salary
     from salaries
 )
 ;
@@ -181,10 +185,53 @@ where emp_no in (
 	select emp_no -- ,salary -- don't need salary, it was just for verification
 	from salaries
 	where salary = (select max(salary) from salaries)
+		and to_date >now()
 )
 ;
 
 -- 3. Find the department name that the employee with the highest salary works in.
+select d.dept_name
+from departments as d
+join dept_emp as de
+	on de.dept_no=d.dept_no
+    and to_date > now()
+where emp_no = (
+	select emp_no -- ,salary -- don't need salary, it was just for verification
+	from salaries
+	where salary = (select max(salary) from salaries)
+		and to_date >now()
+)
+;
 
--- 4. Who is the highest paid employee within each department.
+-- 4. Who is the highest paid employee within each department?
+
+# Get a column of departments
+select *
+from departments;
+
+# Create table with current max salaries and their department numbers
+select de.dept_no,max(s.salary)
+from dept_emp as de
+join salaries as s
+	on de.emp_no=s.emp_no
+    and de.to_date > now()
+    and s.to_date > now()
+group by de.dept_no
+;
+
+# Select names from the departments
+select dept_name
+from departments
+where dept_no in 
+	(
+    select de.dept_no,max(s.salary)
+	from dept_emp as de
+	join salaries as s
+		on de.emp_no=s.emp_no
+		and de.to_date > now()
+		and s.to_date > now()
+	group by de.dept_no
+    )
+;
+
 
