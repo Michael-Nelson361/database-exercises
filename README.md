@@ -14,5 +14,5 @@ This repo is being used for the foreseeable future during the Codeup SQL section
 09. join_exercises.sql
 10. subqueries_exercises.sql
 11. case_exercises.sql
-12. temporary_tables.sql (Initialized)
+12. temporary_tables.sql
 13. more_exercises.sql (Initialized)
