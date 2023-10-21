@@ -86,97 +86,71 @@ alter table sakila_payments modify amount int; -- Finally make it an integer val
 -- 		Find out how the current average pay in each department compares to the overall current pay for everyone at the company. 
 -- 		For this comparison, you will calculate the z-score for each salary. 
 -- 		In terms of salary, what is the best department right now to work for? The worst?
-# Let's see what we're working with
+
+# Create the department averages
+create temporary table dept_avg (
 select 
 	dept_no
-    ,e_s.emp_no
-    ,salary
-    ,dept_name
-from employees.salaries e_s
+    ,avg(salary) as dept_avg
+from employees.salaries as e_s
 join employees.dept_emp as e_de
 	on e_s.emp_no = e_de.emp_no
-    and e_de.to_date > now()
     and e_s.to_date > now()
-join employees.departments as e_d
-	using(dept_no)
-;
+    and e_de.to_date > now()
+group by dept_no
+);
 
-# Now let's import this data to work with it a little better
-create temporary table salary_data 
-	(
-	select 
-		dept_no
-		,e_s.emp_no
-		,salary
-		,dept_name
-        ,avg_sal
-	from employees.salaries e_s
-	join employees.dept_emp as e_de
-		on e_s.emp_no = e_de.emp_no
-		and e_de.to_date > now()
-		and e_s.to_date > now()
-	join employees.departments as e_d
-		using(dept_no)
-	
-    # Join the average salaries onto departments
-    # so that we have it all condensed and don't have to bother with adding a column with this
-	join 
-    (
-    select 
-		d.dept_name,
-		AVG(s.salary) avg_sal
-	from employees.salaries s
-	join employees.dept_emp de
-		on s.emp_no=de.emp_no
-        and de.to_date > now()
-        and s.to_date > now()
-	join employees.departments d
-		on d.dept_no=de.dept_no
-	group by d.dept_name
-    ) as sal_avg_dept
-		using(dept_name)
-	)
-; -- select * from salary_data; -- for verifying the script
+# Get the standard deviation values and the overall company average
+create temporary table std_avg (
+select 
+	avg(salary) as co_avg
+    ,std(salary) as co_std
+from employees.salaries as e_s
+where to_date > now()
+);
 
-# Add the company average to the table
-alter table salary_data add co_avg float;
-update salary_data set co_avg = 
-	(
-	select avg(salary) from employees.salaries where to_date > now()
-	);
+# Combine the two above tables
+create temporary table salary_data (
+select *
+from dept_avg
+join std_avg
+);
 
-# Now add the standard deviation to the table
-alter table salary_data add std_dev float;
-update salary_data set std_dev = 
-	(
-	select std(salary) from employees.salaries where to_date > now()
-	);
 
 # Add the zscore
 alter table salary_data add zscore float;
-update salary_data set zscore = (avg_sal - co_avg) / std_dev;
+update salary_data set zscore = (dept_avg - co_avg) / co_std;
 
-
-
-# Now limit selection parameters
-# This will also showcase the comparison between the employee's salary and the department average
+# Show the best to worst departments based on zscore
+# Sales is in the lead, with HR being dead last!
+# Side note: all the departments that deal with finances all have positive zscores.
 select 
-	concat(first_name,' ',last_name) as 'name'
-    ,salary
-    ,round(avg_sal,2) as dept_avg
-    ,dept_name
+	dept_name
+    ,zscore
 from salary_data
-join employees.employees
-	using(emp_no) -- Add the employees table just to replace the number with a name
+join employees.departments
+	using(dept_no)
+order by zscore desc
 ;
 
-# So based on the following selections:
-# Sales pays the best, while Human Resources pays the worst.
-
-select zscore,dept_name
-from salary_data
-group by dept_name,zscore
-order by zscore desc
+# To show the comparison of employee salary against department average salary
+select 
+	concat(first_name, ' ', last_name) as full_name
+    ,dept_name as department
+    ,salary
+    ,dept_avg
+from salary_data as sd
+join employees.dept_emp as e_de
+	using(dept_no)
+join employees.employees as e_e
+	using(emp_no)
+join employees.departments as e_d
+	using(dept_no)
+join employees.salaries as e_s
+	using(emp_no)
+where e_de.to_date > now()
+	and e_s.to_date > now()
+order by full_name
 ;
 
 -- BONUS Determine the overall historic average department average salary, the historic overall average, 
@@ -184,88 +158,51 @@ order by zscore desc
 --     Do the z-scores for current department average salaries (from exercise 3) tell a similar 
 --     or a different story than the historic department salary z-scores?
 
-# Copy the results from above with some minor variations to variable names
-create temporary table all_salary_data
-	(
-	select 
-		dept_no
-		,e_s.emp_no
-		,salary
-		,dept_name
-        ,avg_sal
-	from employees.salaries e_s
-	join employees.dept_emp as e_de
-		on e_s.emp_no = e_de.emp_no
-        # Remove these for the code
-		-- and e_de.to_date > now()
-		-- and e_s.to_date > now()
-	join employees.departments as e_d
-		using(dept_no)
-	
-    # Join the average salaries onto departments
-    # so that we have it all condensed and don't have to bother with adding a column with this
-	join 
-    (
-    select 
-		d.dept_name,
-		AVG(s.salary) avg_sal
-	from employees.salaries s
-	join employees.dept_emp de
-		on s.emp_no=de.emp_no
-        # Remove these for historical data
-        -- and de.to_date > now()
-        -- and s.to_date > now()
-	join employees.departments d
-		on d.dept_no=de.dept_no
-	group by d.dept_name
-    ) as sal_avg_dept
-		using(dept_name)
-	)
-; -- select * from all_salary_data; -- for verifying the script
-
-# Add additional necessary columns to the table
-alter table all_salary_data add co_avg float, add std_dev float, add zscore float;
-update all_salary_data set co_avg = 
-	(
-	select avg(salary) from employees.salaries
-	);
-
-# Now add the standard deviation to the table
-alter table all_salary_data add std_dev float, add zscore float;
-update all_salary_data set std_dev = 
-	(
-	select std(salary) from employees.salaries
-	);
-
-# Add the zscore
--- alter table all_salary_data add zscore float;
-update all_salary_data set zscore = (avg_sal - co_avg) / std_dev;
-
-
-
-# Now limit selection parameters
-# This will also showcase the comparison between the employee's salary and the department average
+# Let's take everything we did earlier and re-do it without adding date limitations
+create temporary table hist_dept_avg (
 select 
-	concat(first_name,' ',last_name) as 'name'
-    ,salary
-    ,round(avg_sal,2) as dept_avg
-    ,dept_name
-from all_salary_data
-join employees.employees
-	using(emp_no) -- Add the employees table just to replace the number with a name
-;
+	dept_no
+    ,avg(salary) as dept_avg
+from employees.salaries as e_s
+join employees.dept_emp as e_de
+	on e_s.emp_no = e_de.emp_no
+group by dept_no
+);
 
-# So based on the following selections:
-# Sales pays the best, while Human Resources pays the worst.
+create temporary table hist_std_avg (
+select 
+	avg(salary) as co_avg
+    ,std(salary) as co_std
+from employees.salaries as e_s
+);
 
-select zscore,dept_name
-from all_salary_data
-group by dept_name,zscore
+create temporary table hist_salary_data (
+select *
+from hist_dept_avg
+join hist_std_avg
+);
+
+alter table hist_salary_data add zscore float;
+update hist_salary_data set zscore = (dept_avg - co_avg) / co_std;
+
+# Let's see the results and it looks like the historical data shows the same trend.
+# Sales is on top, human resources on bottom.
+select 
+	dept_name
+    ,zscore
+from hist_salary_data
+join employees.departments
+	using(dept_no)
 order by zscore desc
 ;
+
 
 # Statements to drop a table if necessary
 drop table employees_with_departments;
 drop table sakila_payments;
+drop table dept_avg;
+drop table std_avg;
 drop table salary_data;
-drop table all_salary_data;
+drop table hist_dept_avg;
+drop table hist_std_avg;
+drop table hist_salary_data;
