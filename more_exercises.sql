@@ -1,24 +1,96 @@
 -- More Drills With The Sakila Database
+use sakila;
+select database();
 -- 1. SELECT statements
 -- 	a. Select all columns from the actor table.
+select * from actor;
+
 -- 	b. Select only the last_name column from the actor table.
+select last_name
+from actor;
+
 -- 	c. Select only the film_id, title, and release_year columns from the film table.
+select
+	film_id
+    ,title
+    ,release_year
+from film;
 
 
 -- 2. DISTINCT operator
 -- 	a. Select all distinct (different) last names from the actor table.
+select distinct last_name
+from actor;
+
 -- 	b. Select all distinct (different) postal codes from the address table.
+describe address;
+select distinct postal_code
+from address;
+
 -- 	c. Select all distinct (different) ratings from the film table.
+select distinct rating
+from film;
 
 
 -- 3. WHERE clause
 -- 	a. Select the title, description, rating, and movie length columns from the films table that last 3 hours or longer.
+select 
+	title
+    ,description
+    ,rating
+    ,length
+from film
+where length > 3*60
+;
+
 -- 	b. Select the payment id, amount, and payment date columns from the payments table for payments made on or after 05/27/2005.
+select 
+	payment_id
+    ,amount
+    ,payment_date
+from payment
+where payment_date >= 20050527
+;
+
 -- 	c. Select the primary key, amount, and payment date columns from the payment table for payments made on 05/27/2005.
+select 
+	payment_id
+    ,amount
+    ,payment_date
+from payment
+where payment_date like '2005-05-27%'
+;
+
 -- 	d. Select all columns from the customer table for rows that have last names beginning with "S" and first names ending with "N".
+select *
+from customer
+where last_name like 'S%'
+	and first_name like '%n'
+;
+
 -- 	e. Select all columns from the customer table for rows where the customer is inactive or has a last name beginning with "M".
+select *
+from customer
+where active = 0 or last_name like 'm%'
+;
+
 -- 	f. Select all columns from the category table for rows where the primary key is greater than 4 and the name field begins with either "C", "S" or "T".
+select *
+from category
+where category_id > 4
+	and (
+		name like 'c%'
+        or name like 's%'
+        or name like 't%'
+        )
+;
+
 -- 	g. Select all columns minus the password column from the staff table for rows that contain a password.
+select *
+from staff
+where 'password' != null
+;
+
 -- 	h. Select all columns minus the password column from the staff table for rows that do not contain a password.
 
 
