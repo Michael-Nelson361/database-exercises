@@ -86,25 +86,58 @@ where category_id > 4
 ;
 
 -- 	g. Select all columns minus the password column from the staff table for rows that contain a password.
+# This isn't working, not sure quite how to do this one
 select *
 from staff
 where 'password' != null
 ;
 
 -- 	h. Select all columns minus the password column from the staff table for rows that do not contain a password.
+# This is ideally just the opposite of the previous answer
 
 
 -- 4. IN operator
 -- 	a. Select the phone and district columns from the address table for addresses in California, England, Taipei, or West Java.
+select 
+	phone
+    ,district
+from address
+where district in ('California','England','Taipei','West Java')
+;
+
 -- 	b. Select the payment id, amount, and payment date columns from the payment table for payments made on 05/25/2005, 05/27/2005, and 05/29/2005. 
 -- 		(Use the IN operator and the DATE function, instead of the AND operator as in previous exercises.)
+select 
+	payment_id
+    ,amount
+    ,payment_date
+from payment
+where date(payment_date) in ('2005-05-25','2005-05-27','2005-05-29')
+;
+
 -- 	c. Select all columns from the film table for films rated G, PG-13 or NC-17.
+select *
+from film
+where rating in ('G','PG-13','NC-17')
+;
 
 
 -- 5. BETWEEN operator
 -- 	a. Select all columns from the payment table for payments made between midnight 05/25/2005 and 1 second before midnight 05/26/2005.
--- 	b. Select the film_id, title, and description columns from the film table for films where the length of the description is between 100 and 120.
+select *
+from payment
+where date(payment_date) between '2005-05-25' and '2005-05-26'
+order by payment_date desc
+;
 
+-- 	b. Select the film_id, title, and description columns from the film table for films where the length of the description is between 100 and 120.
+select
+	film_id
+    ,title
+    ,description
+from film
+where char_length(description) between 100 and 120
+;
 
 -- 6. LIKE operator
 -- 	a. Select the following columns from the film table for rows where the description begins with "A Thoughtful".
