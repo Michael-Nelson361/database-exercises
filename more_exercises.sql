@@ -86,14 +86,36 @@ where category_id > 4
 ;
 
 -- 	g. Select all columns minus the password column from the staff table for rows that contain a password.
-# This isn't working, not sure quite how to do this one
-select *
+select 
+	staff_id
+	,first_name
+    ,last_name
+    ,address_id
+    ,picture
+    ,email
+    ,store_id
+    ,active
+    ,username
+    ,last_update
 from staff
-where 'password' != null
+where password is not null
 ;
 
 -- 	h. Select all columns minus the password column from the staff table for rows that do not contain a password.
-# This is ideally just the opposite of the previous answer
+select 
+	staff_id
+	,first_name
+    ,last_name
+    ,address_id
+    ,picture
+    ,email
+    ,store_id
+    ,active
+    ,username
+    ,last_update
+from staff
+where password is null
+;
 
 
 -- 4. IN operator
@@ -141,15 +163,51 @@ where char_length(description) between 100 and 120
 
 -- 6. LIKE operator
 -- 	a. Select the following columns from the film table for rows where the description begins with "A Thoughtful".
+select
+	*
+from film
+where description like 'A Thoughtful%'
+;
+
 -- 	b. Select the following columns from the film table for rows where the description ends with the word "Boat".
+select
+	*
+from film
+where description like '%Boat'
+;
+
 -- 	c. Select the following columns from the film table where the description contains the word "Database" and the length of the film is greater than 3 hours.
+select
+	*
+from film
+where description like '%Database%'
+	and length > 3*60
+;
 
 
 -- 7. LIMIT Operator
 -- 	a. Select all columns from the payment table and only include the first 20 rows.
+select *
+from payment
+limit 20
+;
+
 -- 	b. Select the payment date and amount columns from the payment table for rows where the payment amount is greater than 5,
 -- 		and only select rows whose zero-based index in the result set is between 1000-2000.
+select 
+	payment_id,
+	payment_date
+    ,amount
+from payment
+where amount > 5
+limit 1001 offset 999
+;
+
 -- 	c. Select all columns from the customer table, limiting results to those where the zero-based index is between 101-200.
+select *
+from customer
+limit 100 offset 100
+;
 
 
 -- 8. ORDER BY statement
