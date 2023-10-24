@@ -257,21 +257,93 @@ order by length desc
 -- 		- Label customer first_name/last_name columns as customer_first_name/customer_last_name
 -- 		- Label actor first_name/last_name columns in a similar fashion.
 -- 		- returns correct number of records: 620
+select 
+	c.first_name as customer_first_name
+    ,c.last_name as customer_last_name
+    ,a.first_name as actor_first_name
+    ,a.last_name as actor_last_name
+from customer as c
+left join actor as a
+	on c.last_name = a.last_name
+;
+
 -- 	b. Select the customer first_name/last_name and actor first_name/last_name columns from performing a right join
 -- 		between the customer and actor column on the last_name column in each table. (i.e. customer.last_name = actor.last_name)
 -- 		- returns correct number of records: 200
+select 
+	c.first_name as customer_first_name
+    ,c.last_name as customer_last_name
+    ,a.first_name as actor_first_name
+    ,a.last_name as actor_last_name
+from customer as c
+right join actor as a
+	on c.last_name = a.last_name
+;
+
 -- 	c. Select the customer first_name/last_name and actor first_name/last_name columns from performing an inner join 
 -- 		between the customer and actor column on the last_name column in each table. (i.e. customer.last_name = actor.last_name)
 -- 		- returns correct number of records: 43
+select 
+	c.first_name as customer_first_name
+    ,c.last_name as customer_last_name
+    ,a.first_name as actor_first_name
+    ,a.last_name as actor_last_name
+from customer as c
+join actor as a
+	on c.last_name = a.last_name
+;
+
 -- 	d. Select the city name and country name columns from the city table, performing a left join with the country table to get the country name column.
 -- 		- Returns correct records: 600
+describe city;
+describe country;
+
+select 
+	city
+    ,country
+from city
+left join country
+	on city.country_id = country.country_id
+;
+
 -- 	e. Select the title, description, release year, and language name columns from the film table, 
 -- 		performing a left join with the language table to get the "language" column.
 -- 		- Label the language.name column as "language"
 -- 		- Returns 1000 rows
+describe film;
+describe language;
+
+select
+	f.title
+    ,f.description
+    ,f.release_year
+    ,l.name
+from film as f
+left join language as l
+	on f.language_id=l.language_id
+;
+
 -- 	f. Select the first_name, last_name, address, address2, city name, district, and postal code columns from the staff table, 
 -- 		performing 2 left joins with the address table then the city table to get the address and city related columns.
 -- 		- returns correct number of rows: 2
+describe staff;
+describe city;
+describe address;
+
+select 
+	first_name
+    ,last_name
+    ,address
+    ,address2
+    ,city
+    ,district
+    ,postal_code
+from staff as s
+left join address as a
+	using(address_id)
+left join city as c
+	using(city_id)
+;
 
 -- ----------------
 
