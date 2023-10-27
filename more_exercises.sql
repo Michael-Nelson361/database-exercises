@@ -348,25 +348,238 @@ left join city as c
 -- ----------------
 
 -- 1. Display the first and last names in all lowercase of all the actors.
+select 
+	lower(first_name)
+    ,lower(last_name)
+from actor
+;
+
 -- 2. You need to find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe." 
 -- 	What is one query would you use to obtain this information?
+select 
+	actor_id
+    ,first_name
+    ,last_name
+from actor
+where first_name like '%Joe%'
+;
+
 -- 3. Find all actors whose last name contain the letters "gen":
+select
+	*
+from actor
+where last_name like '%gen%'
+;
+
 -- 4. Find all actors whose last names contain the letters "li". This time, order the rows by last name and first name, in that order.
+select *
+from actor
+where last_name like '%li%'
+order by last_name,first_name
+;
+
 -- 5. Using IN, display the country_id and country columns for the following countries: Afghanistan, Bangladesh, and China.
+select 
+	country_id
+    ,country
+from country
+where country in ('Afghanistan','Bangladesh','China')
+;
+
 -- 6. List the last names of all the actors, as well as how many actors have that last name.
+select 
+	last_name
+    ,count(last_name)
+from actor
+group by last_name
+;
+
 -- 7. List last names of actors and the number of actors who have that last name, but only for names that are shared by at least two actors
+select 
+	last_name
+    ,count(*) as cnt
+from actor
+group by last_name
+having cnt >= 2
+;
+
 -- 8. You cannot locate the schema of the address table. Which query would you use to recreate it?
+show create database sakila;
+
 -- 9. Use JOIN to display the first and last names, as well as the address, of each staff member.
+select
+	first_name
+    ,last_name
+    ,address
+from staff as s
+join address as a
+	using(address_id)
+;
+
 -- 10. Use JOIN to display the total amount rung up by each staff member in August of 2005.
+select 
+	sum(amount) as total_sale
+    ,concat(first_name,' ',last_name) as staff_name
+from staff
+join payment
+	using(staff_id)
+where payment_date like '2005-08%'
+group by staff_name
+;
+
 -- 11. List each film and the number of actors who are listed for that film.
+describe film_actor;
+select
+	title
+    ,count(actor_id) as number_actors
+from film
+join film_actor
+	using(film_id)
+group by title
+;
+
 -- 12. How many copies of the film Hunchback Impossible exist in the inventory system?
+show tables;
+describe inventory;
+describe film;
+select 
+	title
+    ,count(*) as num_copies
+from inventory
+join film
+	using(film_id)
+where title = 'Hunchback Impossible'
+group by title
+;
+
 -- 13. The music of Queen and Kris Kristofferson have seen an unlikely resurgence. 
 -- 	As an unintended consequence, films starting with the letters K and Q have also soared in popularity. 
 -- 	Use subqueries to display the titles of movies starting with the letters K and Q whose language is English.
+describe film;
+describe language;
+
+# Create query to get English ID
+select language_id
+from language
+where name = 'English'
+;
+
+# Create query to get names beginning with K or Q that are also in English
+select
+	title
+from film
+where language_id in (
+	select language_id
+	from language
+	where name = 'English'
+) and (title like 'K%' or title like 'Q%')
+;
+
 -- 14. Use subqueries to display all actors who appear in the film Alone Trip.
+# Get the necessary information to connect things
+describe actor;
+describe film;
+describe film_actor;
+
+# Isolate the Alone Trip film
+select film_id
+from film
+where title = 'Alone Trip'
+;
+
+# Get actor ids from film id
+select actor_id
+from film_actor
+where film_id in (
+	select film_id
+	from film
+	where title = 'Alone Trip'
+)
+;
+
+# Now match the names to the actor_ids
+select 
+	first_name
+    ,last_name
+from actor
+where actor_id in (
+	select actor_id
+	from film_actor
+	where film_id in (
+		select film_id
+		from film
+		where title = 'Alone Trip'
+	)
+)
+;
+
 -- 15. You want to run an email marketing campaign in Canada, for which you will need the names and email addresses of all Canadian customers.
+# Get the necessary information to start building queries
+show tables;
+describe customer;
+describe customer_list;
+
+# Build a subquery to get IDs from customers in Canada
+select ID
+from customer_list
+where country = 'Canada'
+;
+
+# Build a query to get customer names and email addresses
+select 
+	first_name
+    ,last_name
+    ,email
+from customer
+where customer_id in (
+	select ID
+	from customer_list
+	where country = 'Canada'
+)
+;
+
 -- 16. Sales have been lagging among young families, and you wish to target all family movies for a promotion. 
 -- 	Identify all movies categorized as family films.
+
+# Get necessary tables to build the query
+show tables;
+describe film;
+describe film_category;
+describe category;
+select * from category;
+
+# Get family category
+select category_id
+from category
+where name = 'Family'
+;
+
+# Get film ids that are of the 'Family' category
+select film_id
+from film_category
+where category_id = (
+	select category_id
+	from category
+	where name = 'Family'
+)
+;
+
+# Now turn all these into a list of films
+select 
+	title
+    ,description
+from film
+where film_id in (
+	select film_id
+	from film_category
+	where category_id = (
+		select category_id
+		from category
+		where name = 'Family'
+	)
+)
+;
+
 -- 17. Write a query to display how much business, in dollars, each store brought in.
 -- 18. Write a query to display for each store the store ID, city, and country.
 -- 19. List the top five genres in gross revenue in descending order. 
