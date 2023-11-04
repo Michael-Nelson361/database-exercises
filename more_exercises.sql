@@ -581,9 +581,82 @@ where film_id in (
 ;
 
 -- 17. Write a query to display how much business, in dollars, each store brought in.
+# Familiarize with datasets
+show tables;
+describe store;
+describe sales_by_store;
+
+# Write the query (I think this is right)
+select 
+	store
+	,concat('$',format(total_sales,2,'en_US')) as sales
+from sales_by_store;
+
 -- 18. Write a query to display for each store the store ID, city, and country.
+describe address;
+select 
+	store_id
+    ,city
+    ,country
+from store
+join address
+	using(address_id)
+join city
+	using(city_id)
+join country
+	using(country_id)
+;
+
 -- 19. List the top five genres in gross revenue in descending order. 
 -- 	(Hint: you may need to use the following tables: category, film_category, inventory, payment, and rental.)
+# Get the table information
+describe category;
+describe film_category;
+describe inventory;
+describe payment;
+describe rental;
+
+# Build out queries with information we need
+select category_id,name from category;
+select film_id,category_id from film_category;
+select inventory_id,film_id from inventory;
+select rental_id,inventory_id from rental;
+select amount,rental_id from payment;
+
+# Join the three inner tables and return only the ids to connect to the last two tables
+select 
+	category_id
+    ,rental_id
+from inventory
+join film_category
+	using(film_id)
+join rental
+	using(inventory_id)
+;
+
+# Add the table built above as a subquery and join the final two tables
+select
+	name
+    ,sum(amount) as t_sales
+from (
+	select 
+		category_id
+		,rental_id
+	from inventory
+	join film_category
+		using(film_id)
+	join rental
+		using(inventory_id)
+	) as agg_table
+join category
+	using(category_id)
+join payment
+	using(rental_id)
+group by name
+order by t_sales desc
+limit 5
+;
+
 
 -- ----------------
 
